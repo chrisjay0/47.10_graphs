@@ -1,35 +1,87 @@
 class Node {
-  constructor(value, adjacent = new Set()) {
-    this.value = value;
-    this.adjacent = adjacent;
+  constructor(value) {
+      this.value = value;
+      this.adjacent = new Set();
   }
 }
 
 class Graph {
   constructor() {
-    this.nodes = new Set();
+      this.nodes = new Set();
   }
 
-  // this function accepts a Node instance and adds it to the nodes property on the graph
-  addVertex(vertex) {}
+  addVertex(vertex) {
+      this.nodes.add(vertex);
+  }
 
-  // this function accepts an array of Node instances and adds them to the nodes property on the graph
-  addVertices(vertexArray) {}
+  addVertices(vertices) {
+      for (let vertex of vertices) {
+          this.addVertex(vertex);
+      }
+  }
 
-  // this function accepts two vertices and updates their adjacent values to include the other vertex
-  addEdge(v1, v2) {}
+  addEdge(vertex1, vertex2) {
+      vertex1.adjacent.add(vertex2);
+      vertex2.adjacent.add(vertex1);
+  }
 
-  // this function accepts two vertices and updates their adjacent values to remove the other vertex
-  removeEdge(v1, v2) {}
+  removeEdge(vertex1, vertex2) {
+      vertex1.adjacent.delete(vertex2);
+      vertex2.adjacent.delete(vertex1);
+  }
 
-  // this function accepts a vertex and removes it from the nodes property, it also updates any adjacency lists that include that vertex
-  removeVertex(vertex) {}
+  removeVertex(vertex) {
+      for (let node of this.nodes) {
+          node.adjacent.delete(vertex);
+      }
+      this.nodes.delete(vertex);
+  }
 
-  // this function returns an array of Node values using DFS
-  depthFirstSearch(start) {}
+  depthFirstSearch(start) {
+      const visited = new Set();
+      const result = [];
 
-  // this function returns an array of Node values using BFS
-  breadthFirstSearch(start) {}
+      function dfs(vertex) {
+          if (!vertex || visited.has(vertex)) return;
+
+          visited.add(vertex);
+          result.push(vertex.value);
+
+          for (let neighbor of vertex.adjacent) {
+              if (!visited.has(neighbor)) {
+                  dfs(neighbor);
+              }
+          }
+      }
+
+      dfs(start);
+
+      return result;
+  }
+
+  breadthFirstSearch(start) {
+      const visited = new Set();
+      const queue = [start];
+      const result = [];
+
+      while (queue.length) {
+          let current = queue.shift();
+
+          if (!visited.has(current)) {
+              result.push(current.value);
+              visited.add(current);
+
+              for (let neighbor of current.adjacent) {
+                  if (!visited.has(neighbor)) {
+                      queue.push(neighbor);
+                  }
+              }
+          }
+      }
+
+      return result;
+  }
 }
 
-module.exports = {Graph, Node}
+
+module.exports = { Graph, Node };
